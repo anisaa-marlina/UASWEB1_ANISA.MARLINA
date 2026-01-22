@@ -2,35 +2,39 @@
 session_start();
 include 'koneksi.php';
 
-$error = "";
-
+// Proses login
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    $query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
 
-    if ($row = mysqli_fetch_assoc($query)) {
+    if ($row = mysqli_fetch_assoc($result)) {
+
         if ($password == $row['password']) {
+
             $_SESSION['email'] = $row['email'];
             $_SESSION['name']  = $row['name'];
             $_SESSION['role']  = $row['role'];
 
             header("Location: dashboard.php");
             exit;
+
         } else {
-            $error = "Password salah!";
+            $error = "Password salah.";
         }
+
     } else {
-        $error = "Email tidak ditemukan!";
+        $error = "Email tidak ditemukan.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Login POLGAN MART</title>
 </head>
 <body>
 
@@ -40,16 +44,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
 
     <form method="post">
-        <label>Email</label><br>
-        <input type="email" name="email" placeholder="Masukkan email" required><br><br>
 
-        <label>Password</label><br>
-        <input type="password" name="password" placeholder="Masukkan password" required><br><br>
+        <div class="form-group">
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" placeholder="Masukkan email anda" required>
+        </div>
+        <br>
 
-        <button type="submit">Login</button>
-        <button type="reset">Batal</button>
+        <div class="form-group">
+            <label for="password">Password</label><br>
+            <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+        </div>
+        <br>
+
+        <button type="submit" class="btn">Login</button>
+        <button type="reset" class="btn-reset">Batal</button>
+
     </form>
 
+    <div class="footer">
+        <p>© 2026 POLGAN MART</p>
+    </div>
 </div>
 
 </body>
