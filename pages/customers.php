@@ -1,13 +1,33 @@
 <?php
 // KONEKSI
 include __DIR__ . '/../koneksi.php';
-
-
 /* ================= HAPUS ================= */
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     mysqli_query($conn, "DELETE FROM pelanggan WHERE id_pelanggan='$id'");
-    echo "<script>window.location='dashboard.php?page=customers';</script>";
+    echo "<script>location='dashboard.php?page=customers';</script>";
+}
+
+/* ================= AMBIL DATA EDIT ================= */
+$edit = null;
+if (isset($_GET['edit'])) {
+    $id = $_GET['edit'];
+    $q  = mysqli_query($conn, "SELECT * FROM pelanggan WHERE id_pelanggan='$id'");
+    $edit = mysqli_fetch_assoc($q);
+}
+
+/* ================= UPDATE ================= */
+if (isset($_POST['update'])) {
+    mysqli_query($conn, "
+        UPDATE pelanggan SET
+            kode_pelanggan='$_POST[kode_pelanggan]',
+            nama_pelanggan='$_POST[nama_pelanggan]',
+            alamat='$_POST[alamat]',
+            no_hp='$_POST[no_hp]',
+            email='$_POST[email]'
+        WHERE id_pelanggan='$_POST[id_pelanggan]'
+    ");
+    echo "<script>location='dashboard.php?page=customers';</script>";
 }
 
 /* ================= TAMBAH ================= */
@@ -23,7 +43,7 @@ if (isset($_POST['simpan'])) {
             '$_POST[email]'
         )
     ");
-    echo "<script>window.location='dashboard.php?page=customers';</script>";
+    echo "<script>location='dashboard.php?page=customers';</script>";
 }
 
 // AMBIL DATA
@@ -44,20 +64,37 @@ th{background:#2c3e50;color:#fff}
 form{background:#fff;padding:15px;margin-bottom:15px}
 input,textarea{width:100%;padding:7px;margin:5px 0}
 button{background:#27ae60;color:#fff;border:none;padding:8px 15px}
-a.hapus{color:red;text-decoration:none}
+a{margin-right:5px;text-decoration:none}
+a.hapus{color:red}
+a.edit{color:blue}
 </style>
 </head>
 
 <body>
 
-<h3>Tambah Customer</h3>
+<h3><?= $edit ? 'Edit Customer' : 'Tambah Customer' ?></h3>
 <form method="POST">
-<input type="text" name="kode_pelanggan" placeholder="Kode Pelanggan">
-<input type="text" name="nama_pelanggan" placeholder="Nama Pelanggan" required>
-<textarea name="alamat" placeholder="Alamat"></textarea>
-<input type="text" name="no_hp" placeholder="No HP">
-<input type="email" name="email" placeholder="Email">
-<button name="simpan">Simpan</button>
+<?php if ($edit) { ?>
+    <input type="hidden" name="id_pelanggan" value="<?= $edit['id_pelanggan'] ?>">
+<?php } ?>
+
+<input type="text" name="kode_pelanggan" placeholder="Kode Pelanggan"
+value="<?= $edit['kode_pelanggan'] ?? '' ?>">
+
+<input type="text" name="nama_pelanggan" placeholder="Nama Pelanggan" required
+value="<?= $edit['nama_pelanggan'] ?? '' ?>">
+
+<textarea name="alamat" placeholder="Alamat"><?= $edit['alamat'] ?? '' ?></textarea>
+
+<input type="text" name="no_hp" placeholder="No HP"
+value="<?= $edit['no_hp'] ?? '' ?>">
+
+<input type="email" name="email" placeholder="Email"
+value="<?= $edit['email'] ?? '' ?>">
+
+<button name="<?= $edit ? 'update' : 'simpan' ?>">
+<?= $edit ? 'Update' : 'Simpan' ?>
+</button>
 </form>
 
 <h3>Data Customers</h3>
@@ -81,15 +118,19 @@ a.hapus{color:red;text-decoration:none}
 <td><?= $row['no_hp'] ?></td>
 <td><?= $row['email'] ?></td>
 <td>
+    <a class="edit"
+       href="dashboard.php?page=customers&edit=<?= $row['id_pelanggan'] ?>">
+       Edit
+    </a>
+    |
     <a class="hapus"
-       href="dashboard.php?page=customers&hapus=<?= $row['id_pelanggan']; ?>"
+       href="dashboard.php?page=customers&hapus=<?= $row['id_pelanggan'] ?>"
        onclick="return confirm('Yakin hapus data ini?')">
        Hapus
     </a>
 </td>
 </tr>
 <?php } ?>
-
 </table>
 
 </body>
