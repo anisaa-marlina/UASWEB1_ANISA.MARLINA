@@ -88,7 +88,7 @@ body {
     <h2>Dashboard</h2>
     <a href="dashboard.php?page=home">Home</a>
     <a href="dashboard.php?page=listproducts">List Produk</a>
-    <a href="dashboard.php?page=customer">Customer</a>
+    <a href="dashboard.php?page=customers">Customer</a>
     <a href="dashboard.php?page=transaksi">Transaksi</a>
     <a href="dashboard.php?page=laporan">Laporan</a>
 </div>
